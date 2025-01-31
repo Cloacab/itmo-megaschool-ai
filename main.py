@@ -73,11 +73,11 @@ sources — список ссылок на источники информаци
         }
     ]
 
-def parse_response(response_text):
+def parse_response(response_text, request: PredictionRequest):
     response_text = response_text[3:len(response_text) - 3]
     response = json.loads(response_text)
     return PredictionResponse(
-        id=response["id"],
+        id=request.id,
         answer=response["answer"],
         reasoning=response["reasoning"],
         sources=[HttpUrl(re.findall(r'https?://\S+', source)[0]) for source in response["sources"]]
@@ -93,7 +93,7 @@ async def predict(body: PredictionRequest):
         result = sdk.models.completions("yandexgpt").configure(temperature=0.5).run(query)
         # Достаем результат
         answer = result[0]  # Замените на реальный вызов модели
-        response = parse_response(answer.text)
+        response = parse_response(answer.text, body)
 
         await logger.info(f"Successfully processed request {body.id}")
         return response
