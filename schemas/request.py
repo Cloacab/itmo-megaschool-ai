@@ -13,3 +13,7 @@ class PredictionResponse(BaseModel):
     answer: int
     reasoning: str
     sources: List[HttpUrl]
+
+class UserQuery:
+    role: str
+    text: str
